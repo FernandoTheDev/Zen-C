@@ -1218,9 +1218,8 @@ void run_repl(const char *self_path)
                     child->type == NODE_EXPR_CALL || child->type == NODE_EXPR_MEMBER ||
                     child->type == NODE_EXPR_INDEX || child->type == NODE_EXPR_CAST ||
                     child->type == NODE_EXPR_SIZEOF || child->type == NODE_EXPR_STRUCT_INIT ||
-                    child->type == NODE_EXPR_ARRAY_LITERAL ||
-                    child->type == NODE_EXPR_SLICE || child->type == NODE_TERNARY ||
-                    child->type == NODE_MATCH)
+                    child->type == NODE_EXPR_ARRAY_LITERAL || child->type == NODE_EXPR_SLICE ||
+                    child->type == NODE_TERNARY || child->type == NODE_MATCH)
                 {
                     is_expr = 1;
                 }
@@ -1229,21 +1228,30 @@ void run_repl(const char *self_path)
             if (is_expr)
             {
                 size_t probesz = 4096;
-                for(int i=0; i<history_len-1; i++) probesz += strlen(history[i]) + 2;
+                for (int i = 0; i < history_len - 1; i++)
+                {
+                    probesz += strlen(history[i]) + 2;
+                }
                 char *probe_code = malloc(probesz + strlen(last_line) + 512);
                 strcpy(probe_code, "");
-                
-                for (int i = 0; i < history_len - 1; i++) {
-                    if (is_header_line(history[i])) {
-                        strcat(probe_code, history[i]); strcat(probe_code, "\n");
+
+                for (int i = 0; i < history_len - 1; i++)
+                {
+                    if (is_header_line(history[i]))
+                    {
+                        strcat(probe_code, history[i]);
+                        strcat(probe_code, "\n");
                     }
                 }
-                
+
                 strcat(probe_code, "fn main() { _z_suppress_stdout(); ");
-                
-                for (int i = 0; i < history_len - 1; i++) {
-                    if (!is_header_line(history[i])) {
-                        strcat(probe_code, history[i]); strcat(probe_code, " ");
+
+                for (int i = 0; i < history_len - 1; i++)
+                {
+                    if (!is_header_line(history[i]))
+                    {
+                        strcat(probe_code, history[i]);
+                        strcat(probe_code, " ");
                     }
                 }
 
@@ -1255,33 +1263,42 @@ void run_repl(const char *self_path)
                 char p_path[256];
                 sprintf(p_path, "/tmp/zprep_repl_probe_%d.zc", rand());
                 FILE *pf = fopen(p_path, "w");
-                if (pf) {
+                if (pf)
+                {
                     fprintf(pf, "%s", probe_code);
                     fclose(pf);
-                    
+
                     char p_cmd[2048];
                     sprintf(p_cmd, "%s run -q %s 2>&1", self_path, p_path);
-                    
+
                     FILE *pp = popen(p_cmd, "r");
                     int is_void = 0;
-                    if (pp) {
+                    if (pp)
+                    {
                         char buf[1024];
-                        while(fgets(buf, sizeof(buf), pp)) {
-                            if (strstr(buf, "void") && strstr(buf, "expression")) {
+                        while (fgets(buf, sizeof(buf), pp))
+                        {
+                            if (strstr(buf, "void") && strstr(buf, "expression"))
+                            {
                                 is_void = 1;
                             }
                         }
                         pclose(pp);
                     }
 
-                    if (!is_void) {
-                         strcat(full_code, "println \"{");
-                         strcat(full_code, last_line);
-                         strcat(full_code, "}\";");
-                    } else {
+                    if (!is_void)
+                    {
+                        strcat(full_code, "println \"{");
+                        strcat(full_code, last_line);
+                        strcat(full_code, "}\";");
+                    }
+                    else
+                    {
                         strcat(full_code, last_line);
                     }
-                } else {
+                }
+                else
+                {
                     strcat(full_code, last_line);
                 }
                 free(probe_code);

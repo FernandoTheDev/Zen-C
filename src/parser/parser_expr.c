@@ -2855,7 +2855,6 @@ ASTNode *parse_expr_prec(ParserContext *ctx, Lexer *l, Precedence min_prec)
             call->call.arg_names = has_named ? arg_names : NULL;
             call->call.arg_count = arg_count;
 
-            // FIX: Propagate return type from function type info
             call->resolved_type = xstrdup("unknown");
             if (lhs->type_info && lhs->type_info->kind == TYPE_FUNCTION && lhs->type_info->inner)
             {
@@ -3037,7 +3036,6 @@ ASTNode *parse_expr_prec(ParserContext *ctx, Lexer *l, Precedence min_prec)
 
             node->type_info = get_field_type(ctx, lhs->type_info, node->member.field);
 
-            // FIX: If not a field, check if it is a method
             if (!node->type_info && lhs->type_info)
             {
                 char *struct_name = NULL;

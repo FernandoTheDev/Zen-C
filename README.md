@@ -78,15 +78,15 @@ y = 20;    // OK
 | Type | C Equivalent | Description |
 |:---|:---|:---|
 | `int`, `uint` | `int`, `unsigned int` | Platform standard integer |
-| `I8` .. `I128` | `int8_t` .. `__int128_t` | Signed fixed-width integers |
-| `U8` .. `U128` | `uint8_t` .. `__uint128_t` | Unsigned fixed-width integers |
+| `I8` .. `I128` or `i8` .. `i128` | `int8_t` .. `__int128_t` | Signed fixed-width integers |
+| `U8` .. `U128` or `u8` .. `u128` | `uint8_t` .. `__uint128_t` | Unsigned fixed-width integers |
 | `isize`, `usize` | `ptrdiff_t`, `size_t` | Pointer-sized integers |
 | `byte` | `uint8_t` | Alias for U8 |
-| `F32`, `F64` | `float`, `double` | Floating point numbers |
+| `F32`, `F64` or `f32`, `f64`  | `float`, `double` | Floating point numbers |
 | `bool` | `bool` | `true` or `false` |
 | `char` | `char` | Single character |
 | `string` | `char*` | C-string (null-terminated) |
-| `U0`, `void` | `void` | Empty type |
+| `U0`, `u0`, `void` | `void` | Empty type |
 
 ### 3. Aggregate Types
 
