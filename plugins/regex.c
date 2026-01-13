@@ -36,8 +36,7 @@ void regex_transpile(const char *input_body, const ZApi *api)
     fprintf(target, "    if (!text) return 0;\n");
     fprintf(target, "    const char *c = text;\n");
 
-    int label_id = 0;
-    emit_match_logic(pattern, target, &label_id);
+    emit_match_logic(pattern, target);
 
     fprintf(target, "    return 1;\n");
     fprintf(target, "}\n");
