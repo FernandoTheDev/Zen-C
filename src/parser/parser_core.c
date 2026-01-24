@@ -347,7 +347,8 @@ ASTNode *parse_program_nodes(ParserContext *ctx, Lexer *l)
             }
             else if (t.len == 5 && strncmp(t.start, "const", 5) == 0)
             {
-                zpanic_at(t, "'const' for declarations is deprecated. Use 'def' for constants or 'var x: const T' for read-only variables.");
+                zpanic_at(t, "'const' for declarations is deprecated. Use 'def' for constants or "
+                             "'var x: const T' for read-only variables.");
             }
             else if (t.len == 6 && strncmp(t.start, "extern", 6) == 0)
             {

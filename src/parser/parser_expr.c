@@ -3423,7 +3423,10 @@ ASTNode *parse_expr_prec(ParserContext *ctx, Lexer *l, Precedence min_prec)
             Symbol *s = find_symbol_entry(ctx, operand->var_ref.name);
             if (s && s->is_def)
             {
-                zpanic_at(t, "Cannot take address of manifest constant '%s' (use 'var' if you need an address)", operand->var_ref.name);
+                zpanic_at(t,
+                          "Cannot take address of manifest constant '%s' (use 'var' if you need an "
+                          "address)",
+                          operand->var_ref.name);
             }
         }
 

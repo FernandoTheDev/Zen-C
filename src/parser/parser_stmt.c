@@ -1963,7 +1963,8 @@ ASTNode *parse_statement(ParserContext *ctx, Lexer *l)
 
         if (strncmp(tk.start, "const", 5) == 0 && tk.len == 5)
         {
-            zpanic_at(tk, "'const' for declarations is deprecated. Use 'def' for constants or 'var x: const T' for read-only variables.");
+            zpanic_at(tk, "'const' for declarations is deprecated. Use 'def' for constants or 'var "
+                          "x: const T' for read-only variables.");
         }
         if (strncmp(tk.start, "return", 6) == 0 && tk.len == 6)
         {

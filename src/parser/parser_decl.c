@@ -727,7 +727,8 @@ ASTNode *parse_def(ParserContext *ctx, Lexer *l)
     // Use is_def flag for manifest constants
     add_symbol(ctx, ns, type_str ? type_str : "unknown", type_obj);
     Symbol *sym_entry = find_symbol_entry(ctx, ns);
-    if (sym_entry) {
+    if (sym_entry)
+    {
         sym_entry->is_def = 1;
         // is_const_value set only if literal
     }
@@ -762,7 +763,7 @@ ASTNode *parse_def(ParserContext *ctx, Lexer *l)
                         free(s->type_info);
                     }
                     s->type_info = type_new(TYPE_INT);
-                    s->type_info->is_const = 1; 
+                    s->type_info->is_const = 1;
                 }
             }
         }
