@@ -1429,26 +1429,12 @@ ASTNode *parse_primary(ParserContext *ctx, Lexer *l)
 
             exit_scope(ctx);
 
-            int any_ref = 0;
-            if (binding_refs)
-            {
-                for (int i = 0; i < binding_count; i++)
-                {
-                    if (binding_refs[i])
-                    {
-                        any_ref = 1;
-                        break;
-                    }
-                }
-            }
-
             ASTNode *c = ast_create(NODE_MATCH_CASE);
             c->match_case.pattern = pattern;
             c->match_case.binding_names = bindings;      // New multi-binding field
             c->match_case.binding_count = binding_count; // New binding count field
             c->match_case.binding_refs = binding_refs;
             c->match_case.is_destructuring = is_destructure;
-            c->match_case.is_ref = any_ref;
             c->match_case.guard = guard;
             c->match_case.body = body;
             c->match_case.is_default = is_default;

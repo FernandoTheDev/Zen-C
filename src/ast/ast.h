@@ -319,7 +319,6 @@ struct ASTNode
             int binding_count;    // Count
             int *binding_refs;    // Ref flags per binding
             int is_destructuring;
-            int is_ref; // Legacy single ref, I will remove it next.
             ASTNode *guard;
             ASTNode *body;
             int is_default;

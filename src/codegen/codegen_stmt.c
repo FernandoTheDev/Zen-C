@@ -177,9 +177,19 @@ void codegen_match_internal(ParserContext *ctx, ASTNode *node, FILE *out, int us
     ASTNode *ref_check = node->match_stmt.cases;
     while (ref_check)
     {
-        if (ref_check->match_case.is_ref)
+        if (ref_check->match_case.binding_refs)
         {
-            has_ref_binding = 1;
+            for (int i = 0; i < ref_check->match_case.binding_count; i++)
+            {
+                if (ref_check->match_case.binding_refs[i])
+                {
+                    has_ref_binding = 1;
+                    break;
+                }
+            }
+        }
+        if (has_ref_binding)
+        {
             break;
         }
         ref_check = ref_check->next;
