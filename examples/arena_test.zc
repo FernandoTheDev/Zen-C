@@ -27,7 +27,7 @@ fn main() -> int {
     let mark = arena.save();
     printf("Savepoint at: %zu\n", mark);
 
-    let extra: int* = arena.alloc_n<int>(100);
+    let _: int* = arena.alloc_n<int>(100);
     printf("After 100 more ints: %zu\n", arena.bytes_used());
 
     arena.restore(mark);
