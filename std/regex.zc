@@ -1,5 +1,6 @@
 include <regex.h>
 include <string.h>
+
 import "./core.zc"
 import "./string.zc"
 import "./vec.zc"
@@ -33,11 +34,11 @@ struct Regex {
 
 impl Regex {
     fn compile(pattern: char*) -> Regex {
-        return Regex::compile_with_flags(pattern, 1);
+        return Regex::compile_with_flags(pattern, 1 | 2);
     }
 
     fn compile_with_flags(pattern: char*, flags: int) -> Regex {
-        let preg = malloc(128);
+        let preg = malloc(1024);
         let status = regcomp(preg, pattern, flags);
         if (status != 0) {
             free(preg);
@@ -53,6 +54,10 @@ impl Regex {
     fn match(self, text: char*) -> bool {
         if (self.preg == 0) { return false; }
         return regexec(self.preg, text, 0, 0, 0) == 0;
+    }
+
+    fn match_full(self, text: char*) -> bool {
+        return self.match(text);
     }
 
     fn match_at(self, text: char*, offset: int) -> bool {
