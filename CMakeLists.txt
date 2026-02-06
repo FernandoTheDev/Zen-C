@@ -1,10 +1,35 @@
 cmake_minimum_required(VERSION 3.10)
 project(zc C)
+include(GNUInstallDirs)
 
 # Set C standard
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Derive ZEN_VERSION from git (similar to Makefile)
+set(ZEN_VERSION "dev")
+execute_process(
+    COMMAND git describe --tags --always --dirty
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    RESULT_VARIABLE GIT_DESCRIBE_RESULT
+    OUTPUT_VARIABLE GIT_DESCRIBE_OUTPUT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(GIT_DESCRIBE_RESULT EQUAL 0 AND NOT "${GIT_DESCRIBE_OUTPUT}" STREQUAL "")
+    set(ZEN_VERSION "${GIT_DESCRIBE_OUTPUT}")
+endif()
+
+# Set ZEN_SHARE_DIR for runtime file lookups (similar intent as Makefile)
+if(NOT DEFINED CMAKE_INSTALL_FULL_DATADIR)
+    set(CMAKE_INSTALL_FULL_DATADIR "${CMAKE_INSTALL_PREFIX}/share")
+endif()
+set(ZEN_SHARE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/zc")
+
+# Provide these as compile definitions for all targets
+add_compile_definitions(
+    ZEN_VERSION="${ZEN_VERSION}"
+    ZEN_SHARE_DIR="${ZEN_SHARE_DIR}"
+)
 # --- Compiler flags (set per compiler) ---
 set(ZC_COMPILE_FLAGS "")
 if(WIN32)
