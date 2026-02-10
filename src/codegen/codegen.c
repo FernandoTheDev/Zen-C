@@ -752,8 +752,11 @@ void codegen_expression(ParserContext *ctx, ASTNode *node, FILE *out)
                     // Skip internal runtime functions
                     int is_internal = strncmp(name, "_z_", 3) == 0 || strncmp(name, "_Z", 2) == 0;
 
-                    // Only warn if no C interop and not an internal function
-                    if (!has_c_interop && !is_internal)
+                    // Check if explicitly declared as extern (via `extern` or header scanning)
+                    int is_extern = is_extern_symbol(ctx, name);
+
+                    // Only warn if no C interop, not internal, and not explicitly extern
+                    if (!has_c_interop && !is_internal && !is_extern)
                     {
                         Token t = node->call.callee->token;
                         fprintf(stderr, "Warning at %s:%d:%d: Undefined function '%s'\n",
@@ -1587,11 +1590,7 @@ void codegen_expression(ParserContext *ctx, ASTNode *node, FILE *out)
         if (strstr(ret_type, "*") == NULL && strcmp(ret_type, "string") != 0 &&
             strcmp(ret_type, "void") != 0 && strcmp(ret_type, "Async") != 0)
         {
-            if (strcmp(ret_type, "int") != 0 && strcmp(ret_type, "bool") != 0 &&
-                strcmp(ret_type, "char") != 0 && strcmp(ret_type, "float") != 0 &&
-                strcmp(ret_type, "double") != 0 && strcmp(ret_type, "long") != 0 &&
-                strcmp(ret_type, "usize") != 0 && strcmp(ret_type, "isize") != 0 &&
-                strncmp(ret_type, "uint", 4) != 0 && strncmp(ret_type, "int", 3) != 0)
+            if (is_struct_return_type(ret_type))
             {
                 returns_struct = 1;
             }
