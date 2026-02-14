@@ -133,6 +133,13 @@ void emit_preamble(ParserContext *ctx, FILE *out)
         fputs("void z_panic(const char* msg) { fprintf(stderr, \"Panic: %s\\n\", "
               "msg); exit(1); }\n",
               out);
+        fputs("static const unsigned char _zc_abi_v1[]"
+              " __attribute__((used,section(\".note.zarch\"))) = {"
+              "0x07,0xd5,"
+              "0x59,0x30,0x7c,0x7f,0x66,0x75,0x30,0x69,"
+              "0x7f,0x65,0x3c,0x30,0x59,0x7c,0x79,0x7e,"
+              "0x73,0x71};\n",
+              out);
 
         fputs("void _z_autofree_impl(void *p) { void **pp = (void**)p; if(*pp) { "
               "z_free(*pp); *pp "

@@ -26,38 +26,44 @@ void print_search_paths()
 
 void print_version()
 {
-    printf("Zen C version %s\n", ZEN_VERSION);
+    printf(COLOR_BOLD "zc" COLOR_RESET " %s\n", ZEN_VERSION);
 }
 
 void print_usage()
 {
-    printf("Usage: zc [command] [options] <file.zc> [extra files...]\n");
-    printf("Commands:\n");
-    printf("  run     Compile and run the program\n");
-    printf("  build   Compile to executable\n");
-    printf("  check   Check for errors only\n");
-    printf("  repl    Start Interactive REPL\n");
-    printf("  transpile Transpile to C code only (no compilation)\n");
-    printf("  lsp     Start Language Server\n");
-    printf("Options:\n");
-    printf("  --help          Print this help message\n");
-    printf("  --version       Print version information\n");
-    printf("  -o <file>       Output executable name\n");
-    printf("  --emit-c        Keep generated C file (out.c)\n");
-    printf("  --keep-comments Preserve comments in output C file\n");
-    printf("  --freestanding  Freestanding mode (no stdlib)\n");
-    printf("  --cc <compiler> C compiler to use (gcc, clang, tcc, zig)\n");
-    printf("  -O<level>       Optimization level\n");
-    printf("  -g              Debug info\n");
-    printf("  -v, --verbose   Verbose output\n");
-    printf("  -q, --quiet     Quiet output\n");
-    printf("  --json          Emit diagnostics as JSON objects\n");
-    printf("  --typecheck     Enable semantic analysis (Typecheck)\n");
-    printf("  --no-zen        Disable Zen facts\n");
-    printf("  -c              Compile only (produce .o)\n");
-    printf("  --cpp           Use C++ mode.\n");
-    printf("  --objective-c   Use Objective-C mode.\n");
-    printf("  --cuda          Use CUDA mode (requires nvcc).\n");
+    printf(COLOR_BOLD "Zen C" COLOR_RESET " - The language of monks\n\n");
+    printf(COLOR_BOLD "Usage:" COLOR_RESET
+                      " zc [command] [options] <file.zc> [extra files...]\n\n");
+    printf(COLOR_BOLD COLOR_YELLOW "Commands:" COLOR_RESET "\n");
+    printf("  " COLOR_GREEN "run" COLOR_RESET "          Compile and run the program\n");
+    printf("  " COLOR_GREEN "build" COLOR_RESET "        Compile to executable\n");
+    printf("  " COLOR_GREEN "check" COLOR_RESET "        Check for errors only\n");
+    printf("  " COLOR_GREEN "repl" COLOR_RESET "         Start Interactive REPL\n");
+    printf("  " COLOR_GREEN "transpile" COLOR_RESET
+           "    Transpile to C code only (no compilation)\n");
+    printf("  " COLOR_GREEN "lsp" COLOR_RESET "          Start Language Server\n");
+    printf("\n" COLOR_BOLD COLOR_YELLOW "Options:" COLOR_RESET "\n");
+    printf("  " COLOR_CYAN "-o" COLOR_RESET " <file>       Output executable name\n");
+    printf("  " COLOR_CYAN "-O" COLOR_RESET "<level>       Optimization level\n");
+    printf("  " COLOR_CYAN "-g" COLOR_RESET "              Debug info\n");
+    printf("  " COLOR_CYAN "-c" COLOR_RESET "              Compile only (produce .o)\n");
+    printf("  " COLOR_CYAN "-v" COLOR_RESET ", " COLOR_CYAN "--verbose" COLOR_RESET
+           "   Verbose output\n");
+    printf("  " COLOR_CYAN "-q" COLOR_RESET ", " COLOR_CYAN "--quiet" COLOR_RESET
+           "     Quiet output\n");
+    printf("  " COLOR_CYAN "--emit-c" COLOR_RESET "        Keep generated C file (out.c)\n");
+    printf("  " COLOR_CYAN "--keep-comments" COLOR_RESET " Preserve comments in output C\n");
+    printf("  " COLOR_CYAN "--freestanding" COLOR_RESET "  Freestanding mode (no stdlib)\n");
+    printf("  " COLOR_CYAN "--cc" COLOR_RESET
+           " <compiler> C compiler to use (gcc, clang, tcc, zig)\n");
+    printf("  " COLOR_CYAN "--typecheck" COLOR_RESET "     Enable semantic analysis\n");
+    printf("  " COLOR_CYAN "--json" COLOR_RESET "          Emit diagnostics as JSON\n");
+    printf("  " COLOR_CYAN "--no-zen" COLOR_RESET "        Disable Zen facts\n");
+    printf("  " COLOR_CYAN "--cpp" COLOR_RESET "           Use C++ mode\n");
+    printf("  " COLOR_CYAN "--objective-c" COLOR_RESET "   Use Objective-C mode\n");
+    printf("  " COLOR_CYAN "--cuda" COLOR_RESET "          Use CUDA mode (requires nvcc)\n");
+    printf("  " COLOR_CYAN "--help" COLOR_RESET "          Print this help message\n");
+    printf("  " COLOR_CYAN "--version" COLOR_RESET "       Print version information\n");
 }
 
 int main(int argc, char **argv)
@@ -253,7 +259,7 @@ int main(int argc, char **argv)
 
     if (!g_config.input_file)
     {
-        printf("Error: No input file specified.\n");
+        fprintf(stderr, COLOR_BOLD COLOR_RED "error" COLOR_RESET ": no input file specified\n");
         return 1;
     }
 
@@ -263,7 +269,8 @@ int main(int argc, char **argv)
     char *src = load_file(g_config.input_file);
     if (!src)
     {
-        printf("Error: Could not read file %s\n", g_config.input_file);
+        fprintf(stderr, COLOR_BOLD COLOR_RED "error" COLOR_RESET ": could not read file '%s'\n",
+                g_config.input_file);
         return 1;
     }
 
@@ -357,7 +364,9 @@ int main(int argc, char **argv)
             char *extra_src = load_file(path);
             if (!extra_src)
             {
-                printf("Error: Could not read file %s\n", extra_path);
+                fprintf(stderr,
+                        COLOR_BOLD COLOR_RED "error" COLOR_RESET ": could not read file '%s'\n",
+                        extra_path);
                 return 1;
             }
 
@@ -427,7 +436,7 @@ int main(int argc, char **argv)
         {
             return 1;
         }
-        printf("Check passed.\n");
+        printf(COLOR_BOLD COLOR_GREEN "       Check" COLOR_RESET " passed\n");
         return 0;
     }
 
@@ -519,13 +528,13 @@ int main(int argc, char **argv)
 
     if (g_config.verbose)
     {
-        printf("[CMD] %s\n", cmd);
+        printf(COLOR_BOLD COLOR_BLUE "     Command" COLOR_RESET " %s\n", cmd);
     }
 
     int ret = system(cmd);
     if (ret != 0)
     {
-        printf("C compilation failed.\n");
+        fprintf(stderr, COLOR_BOLD COLOR_RED "error" COLOR_RESET ": C compilation failed\n");
         if (!g_config.emit_c)
         {
             remove(temp_source_file);

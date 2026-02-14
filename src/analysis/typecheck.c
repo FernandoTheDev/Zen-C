@@ -682,11 +682,6 @@ static void check_var_decl(TypeChecker *tc, ASTNode *node)
         {
             check_type_compatibility(tc, decl_type, init_type, node->token);
         }
-        else
-        {
-            printf("Check skipped for '%s': decl=%p, init=%p\n", node->var_decl.name,
-                   (void *)decl_type, (void *)init_type);
-        }
 
         // Move Analysis: If initializing from another variable, it moves.
         if (node->var_decl.init_expr->type == NODE_EXPR_VAR)
@@ -1447,7 +1442,6 @@ int check_program(ParserContext *ctx, ASTNode *root)
         ctx->move_state = move_state_create(NULL);
     }
 
-    printf("[TypeCheck] Starting semantic analysis...\n");
     check_node(&tc, root);
 
     if (ctx->move_state)
@@ -1458,10 +1452,13 @@ int check_program(ParserContext *ctx, ASTNode *root)
 
     if (tc.error_count > 0)
     {
-        printf("[TypeCheck] Found %d errors.\n", tc.error_count);
+        fprintf(stderr,
+                COLOR_BOLD COLOR_RED "     error" COLOR_RESET
+                                     ": semantic analysis found %d error%s\n",
+                tc.error_count, tc.error_count == 1 ? "" : "s");
         return 1;
     }
-    printf("[TypeCheck] Passed.\n");
+
     return 0;
 }
 
