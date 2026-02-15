@@ -1160,12 +1160,12 @@ void codegen_node_single(ParserContext *ctx, ASTNode *node, FILE *out)
         fprintf(out, "; ");
         if (node->for_stmt.condition)
         {
-            codegen_expression(ctx, node->for_stmt.condition, out);
+            codegen_expression_bare(ctx, node->for_stmt.condition, out);
         }
         fprintf(out, "; ");
         if (node->for_stmt.step)
         {
-            codegen_expression(ctx, node->for_stmt.step, out);
+            codegen_expression_bare(ctx, node->for_stmt.step, out);
         }
         fprintf(out, ") ");
         codegen_node_single(ctx, node->for_stmt.body, out);

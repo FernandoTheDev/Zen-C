@@ -34,6 +34,14 @@ void codegen_walker(ParserContext *ctx, ASTNode *node, FILE *out);
 void codegen_expression(ParserContext *ctx, ASTNode *node, FILE *out);
 
 /**
+ * @brief Generates code for an expression without outermost parentheses.
+ *
+ * Used in contexts where extra parentheses break semantics (e.g. OpenMP
+ * canonical for-loop form requires bare controlling predicates).
+ */
+void codegen_expression_bare(ParserContext *ctx, ASTNode *node, FILE *out);
+
+/**
  * @brief Internal handler for match statements.
  */
 void codegen_match_internal(ParserContext *ctx, ASTNode *node, FILE *out, int use_result);

@@ -1792,3 +1792,47 @@ void codegen_expression(ParserContext *ctx, ASTNode *node, FILE *out)
         break;
     }
 }
+
+void codegen_expression_bare(ParserContext *ctx, ASTNode *node, FILE *out)
+{
+    if (!node)
+    {
+        return;
+    }
+
+    if (node->type == NODE_EXPR_BINARY)
+    {
+        const char *op = node->binary.op;
+        int is_simple = (strcmp(op, "<") == 0 || strcmp(op, ">") == 0 || strcmp(op, "<=") == 0 ||
+                         strcmp(op, ">=") == 0 || strcmp(op, "+") == 0 || strcmp(op, "-") == 0 ||
+                         strcmp(op, "*") == 0 || strcmp(op, "/") == 0 || strcmp(op, "%") == 0 ||
+                         strcmp(op, "+=") == 0 || strcmp(op, "-=") == 0 || strcmp(op, "*=") == 0 ||
+                         strcmp(op, "/=") == 0 || strcmp(op, "=") == 0);
+
+        if (is_simple)
+        {
+            codegen_expression(ctx, node->binary.left, out);
+            fprintf(out, " %s ", op);
+            codegen_expression(ctx, node->binary.right, out);
+            return;
+        }
+    }
+
+    if (node->type == NODE_EXPR_UNARY && node->unary.op)
+    {
+        if (strcmp(node->unary.op, "_post++") == 0)
+        {
+            codegen_expression(ctx, node->unary.operand, out);
+            fprintf(out, "++");
+            return;
+        }
+        if (strcmp(node->unary.op, "_post--") == 0)
+        {
+            codegen_expression(ctx, node->unary.operand, out);
+            fprintf(out, "--");
+            return;
+        }
+    }
+
+    codegen_expression(ctx, node, out);
+}
