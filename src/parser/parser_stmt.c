@@ -3848,13 +3848,7 @@ char *run_comptime_block(ParserContext *ctx, Lexer *l)
                "fprintf(stderr, \"Compile-time warning: %%s\\n\", s); }\n");
 
     // Build metadata constants
-#ifdef _WIN32
-    fprintf(f, "#define __COMPTIME_TARGET__ \"windows\"\n");
-#elif defined(__APPLE__)
-    fprintf(f, "#define __COMPTIME_TARGET__ \"macos\"\n");
-#else
-    fprintf(f, "#define __COMPTIME_TARGET__ \"linux\"\n");
-#endif
+    fprintf(f, "#define __COMPTIME_TARGET__ \"%s\"\n", z_get_system_name());
     fprintf(f, "#define __COMPTIME_FILE__ \"%s\"\n", g_current_filename);
 
     ASTNode *curr = nodes;

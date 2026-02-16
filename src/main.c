@@ -531,13 +531,7 @@ int main(int argc, char **argv)
     char std_path[9216] = {0};
     char config_path[9216] = {0};
 
-    char *last_sep = strrchr(exe_path,
-#ifdef _WIN32
-                             '\\'
-#else
-                             '/'
-#endif
-    );
+    char *last_sep = z_path_last_sep(exe_path);
     if (last_sep)
     {
         *last_sep = 0;

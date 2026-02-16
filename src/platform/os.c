@@ -174,3 +174,14 @@ int z_match_os(const char *os_name)
     }
     return 0;
 }
+
+const char *z_get_system_name(void)
+{
+#ifdef _WIN32
+    return "windows";
+#elif defined(__APPLE__)
+    return "macos";
+#else
+    return "linux";
+#endif
+}
