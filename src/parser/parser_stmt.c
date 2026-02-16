@@ -3619,11 +3619,15 @@ ASTNode *parse_import(ParserContext *ctx, Lexer *l)
     }
 
     // Canonicalize path to avoid duplicates (for example: "./std/io.zc" vs "std/io.zc")
-    char *real_fn = realpath(fn, NULL);
-    if (real_fn)
+    // Only resolve if file exists! On Windows, realpath (_fullpath) resolves non-existent files to CWD.
+    if (access(fn, R_OK) == 0)
     {
-        free(fn);
-        fn = real_fn;
+        char *real_fn = realpath(fn, NULL);
+        if (real_fn)
+        {
+            free(fn);
+            fn = real_fn;
+        }
     }
 
     // Check if file already imported
