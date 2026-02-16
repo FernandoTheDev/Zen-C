@@ -15,8 +15,7 @@ typedef struct PluginNode
 
 static PluginNode *head = NULL;
 
-#ifdef _WIN32
-#include <windows.h>
+#include "../platform/os.h"
 
 void zptr_plugin_mgr_init(void)
 {
@@ -44,18 +43,17 @@ void zptr_register_plugin(ZPlugin *plugin)
 
 ZPlugin *zptr_load_plugin(const char *path)
 {
-    HMODULE handle = LoadLibraryA(path);
+    void *handle = z_dlopen(path);
     if (!handle)
     {
         return NULL;
     }
 
-    // Get init function
-    ZPluginInitFn init_fn = (ZPluginInitFn)GetProcAddress(handle, "z_plugin_init");
+    ZPluginInitFn init_fn = (ZPluginInitFn)z_dlsym(handle, "z_plugin_init");
     if (!init_fn)
     {
         fprintf(stderr, "Plugin '%s' missing 'z_plugin_init' symbol\n", path);
-        FreeLibrary(handle);
+        z_dlclose(handle);
         return NULL;
     }
 
@@ -63,98 +61,7 @@ ZPlugin *zptr_load_plugin(const char *path)
     if (!plugin)
     {
         fprintf(stderr, "Plugin '%s' init returned NULL\n", path);
-        FreeLibrary(handle);
-        return NULL;
-    }
-
-    // Register
-    PluginNode *node = malloc(sizeof(PluginNode));
-    node->plugin = plugin;
-    node->handle = (void *)handle;
-    node->next = head;
-    head = node;
-
-    return plugin;
-}
-
-ZPlugin *zptr_find_plugin(const char *name)
-{
-    PluginNode *curr = head;
-    while (curr)
-    {
-        if (strcmp(curr->plugin->name, name) == 0)
-        {
-            return curr->plugin;
-        }
-        curr = curr->next;
-    }
-    return NULL;
-}
-
-void zptr_plugin_mgr_cleanup(void)
-{
-    PluginNode *curr = head;
-    while (curr)
-    {
-        PluginNode *next = curr->next;
-        if (curr->handle)
-        {
-            FreeLibrary((HMODULE)curr->handle);
-        }
-        free(curr);
-        curr = next;
-    }
-    head = NULL;
-}
-#else
-// POSIX implementation
-#include <dlfcn.h>
-
-void zptr_plugin_mgr_init(void)
-{
-    head = NULL;
-}
-
-void zptr_register_plugin(ZPlugin *plugin)
-{
-    if (!plugin)
-    {
-        return;
-    }
-
-    if (zptr_find_plugin(plugin->name))
-    {
-        return;
-    }
-
-    PluginNode *node = malloc(sizeof(PluginNode));
-    node->plugin = plugin;
-    node->handle = NULL;
-    node->next = head;
-    head = node;
-}
-
-ZPlugin *zptr_load_plugin(const char *path)
-{
-    void *handle = dlopen(path, RTLD_LAZY);
-    if (!handle)
-    {
-        return NULL;
-    }
-
-    ZPluginInitFn init_fn = (ZPluginInitFn)dlsym(handle, "z_plugin_init");
-    if (!init_fn)
-    {
-        fprintf(stderr, "Plugin '%s' missing 'z_plugin_init' symbol\n", path);
-        dlclose(handle);
-        return NULL;
-    }
-
-    ZPlugin *plugin = init_fn();
-    if (!plugin)
-    {
-        fprintf(stderr, "Plugin '%s' init returned NULL\n", path);
-        dlclose(handle);
+        z_dlclose(handle);
         return NULL;
     }
 
@@ -190,11 +97,10 @@ void zptr_plugin_mgr_cleanup(void)
         PluginNode *next = curr->next;
         if (curr->handle)
         {
-            dlclose(curr->handle);
+            z_dlclose(curr->handle);
         }
         free(curr);
         curr = next;
     }
     head = NULL;
 }
-#endif

@@ -140,3 +140,37 @@ int z_isatty(int fd)
     return isatty(fd);
 #endif
 }
+
+int z_match_os(const char *os_name)
+{
+    if (!os_name)
+    {
+        return 0;
+    }
+
+    if (0 == strcmp(os_name, "linux"))
+    {
+#ifdef __linux__
+        return 1;
+#else
+        return 0;
+#endif
+    }
+    else if (0 == strcmp(os_name, "windows"))
+    {
+#ifdef _WIN32
+        return 1;
+#else
+        return 0;
+#endif
+    }
+    else if (0 == strcmp(os_name, "macos") || 0 == strcmp(os_name, "darwin"))
+    {
+#ifdef __APPLE__
+        return 1;
+#else
+        return 0;
+#endif
+    }
+    return 0;
+}

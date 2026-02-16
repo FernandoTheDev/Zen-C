@@ -113,8 +113,6 @@ static inline const char *z_get_plugin_ext(void)
 #endif
 }
 
-#endif // ZC_PLATFORM_OS_H
-
 /**
  * @brief Setup terminal (enable ANSI colors on Windows).
  */
@@ -149,3 +147,19 @@ void z_get_executable_path(char *buffer, size_t size);
  * @brief Check if file descriptor refers to a terminal.
  */
 int z_isatty(int fd);
+
+// Console / REPL
+void repl_enable_raw_mode(void);
+void repl_disable_raw_mode(void);
+int repl_read_char(char *c);
+int repl_get_window_size(int *rows, int *cols);
+
+// Dynamic Library Loading
+void *z_dlopen(const char *path);
+void *z_dlsym(void *handle, const char *symbol);
+void z_dlclose(void *handle);
+
+// OS Helpers
+int z_match_os(const char *os_name);
+
+#endif // ZC_PLATFORM_OS_H

@@ -32,6 +32,8 @@ set SRCS=src\main.c ^
  src\codegen\codegen_utils.c ^
  src\utils\utils.c ^
  src\platform\os.c ^
+ src\platform\console.c ^
+ src\platform\dylib.c ^
  src\utils\config.c ^
  src\diagnostics\diagnostics.c ^
  src\lexer\token.c ^
@@ -47,7 +49,6 @@ set SRCS=src\main.c ^
  src\lsp\cJSON.c ^
  src\zen\zen_facts.c ^
  src\repl\repl.c ^
- src\repl\repl_os.c ^
  src\plugins\plugin_manager.c ^
  std\third-party\tre\lib\regcomp.c ^
  std\third-party\tre\lib\regerror.c ^

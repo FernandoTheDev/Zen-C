@@ -2,7 +2,7 @@
 #include "ast.h"
 #include "parser/parser.h"
 #include "zprep.h"
-#include "repl_os.h"
+#include "../platform/os.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
