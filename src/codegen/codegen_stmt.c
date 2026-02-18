@@ -1516,8 +1516,14 @@ void codegen_node_single(ParserContext *ctx, ASTNode *node, FILE *out)
             int count = arr->array_literal.count;
             char *elem_type = "void*"; // fallback
 
-            // Try to deduce element type from first element or context
-            if (arr->array_literal.elements && arr->array_literal.elements->type_info)
+            // Prioritize the function return type (Slice_T) to determine the pointer type
+            // This prevents "incompatible pointer type" errors in C when returning literals of
+            // different types
+            if (g_current_func_ret_type && strncmp(g_current_func_ret_type, "Slice_", 6) == 0)
+            {
+                elem_type = xstrdup(g_current_func_ret_type + 6);
+            }
+            else if (arr->array_literal.elements && arr->array_literal.elements->type_info)
             {
                 elem_type = codegen_type_to_string(arr->array_literal.elements->type_info);
             }
@@ -1527,8 +1533,7 @@ void codegen_node_single(ParserContext *ctx, ASTNode *node, FILE *out)
             }
             else
             {
-                // Fallback: parse from Slice_Type
-                elem_type = xstrdup(g_current_func_ret_type + 6);
+                elem_type = xstrdup("void*");
             }
 
             fprintf(out, "    { %s *_tmp_arr = malloc(%d * sizeof(%s));\n", elem_type, count,
